@@ -1,10 +1,23 @@
-job('ExampleJob') {
-    displayName('Example Job')
-    description('This is an example job created using Job DSL')
+jobDsl scriptText: '''pipelineJob(\'my-node-app-pipeline\') {
+    displayName(\'My Node.js App Pipeline\')
 
-    // Add build steps
-    steps {
-        shell('echo "Hello, world!"')
-        // Add more build steps as needed
+    parameters {
+        stringParam(\'ENVIRONMENT\', \'\', \'Environment to deploy the app\')
+        stringParam(\'TAG\', \'\', \'Docker tag for the app\')
     }
-}
+
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url \'https://github.com/my-username/my-node-app.git\'
+                        credentials(\'github-credentials\')
+                    }
+                    branch(\'main\')
+                }
+            }
+            scriptPath(\'scripts/Jenkinsfile\')
+        }
+    }
+}'''
